@@ -2,7 +2,7 @@ import redis
 import json
 
 try:
-    r = redis.StrictRedis(host='cubemail.ga', port=6379, password='7hA~KR&)tLe@Cbbh|=#dS9xV')
+    r = redis.StrictRedis(host='cubemail.ga', port=6379, password='........')
     #print(r)
     r.ping()
     print('Connected')
