@@ -1,0 +1,6 @@
+canaries
+uploads 
+__pycache__
+config.json
+*.txt
+.vscode
