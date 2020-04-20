@@ -1,6 +1,7 @@
 import re
 import sql_database
 from sql_database import Mail_Passwd_IP
+import search_canaries
 
 # Expert Dovecot
 class DovecotExpert:
@@ -48,15 +49,18 @@ class DovecotExpert:
             if self.Password:
                 sql_database.mail_information(matchMail.group(1), self.Password.group(1), self.IP.group(1) if self.IP else None, log['time'])
 
-                if sql_database.mail_information(matchMail.group(1), self.Password.group(1), self.IP.group(1) if self.IP else None, log['time']) == 1:
-                    print('tak teda bol...')
+           # search_canaries.search_canary(matchMail.group(1))
+                #if sql_database.mail_information(matchMail.group(1), self.Password.group(1), self.IP.group(1) if self.IP else None, log['time']) == 0:
+                    #print('tak teda bol...')
+                #    search_canaries.search_canary(matchMail.group(1))
+
                 
-            if sql_database.Mail_Passwd_IP.select().where(sql_database.Mail_Passwd_IP.mail == matchMail.group(1)):
-                if self.SHA.search(log['message']):
-                    print('je tu SHA') 
-                    self.SHA_passwd = re.search(r"!= '(.*)'", log['message'])
-                    if self.SHA_passwd:
-                        print('zakodovane je: ', self.SHA_passwd.group(1))
+            #if sql_database.Mail_Passwd_IP.select().where(sql_database.Mail_Passwd_IP.mail == matchMail.group(1)):
+            #    if self.SHA.search(log['message']):
+            #        print('je tu SHA') 
+            #        self.SHA_passwd = re.search(r"!= '(.*)'", log['message'])
+            #        if self.SHA_passwd:
+            #            print('zakodovane je: ', self.SHA_passwd.group(1))
             return
 
         if matchPID:
@@ -64,5 +68,5 @@ class DovecotExpert:
                             'sprava': 'Client connected.',
                             'PID': matchPID.group(1)})
             return
-            
+
         return 

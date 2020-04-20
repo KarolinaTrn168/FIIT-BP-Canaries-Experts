@@ -1,5 +1,3 @@
-# pip install requests
-
 import requests
 import datetime
 from threading import Timer
@@ -103,17 +101,20 @@ def authorization(authProvidor):
     auth = authProvider(username=Config['canaries_api']['username_api'], password=Config['canaries_api']['password_api'])
     return auth
 
-auth = authorization(authProvider)
-Config = open_config()
+def search_canary(mail):
+    auth = authorization(authProvider)
+    Config = open_config()
 
-try:
-    r = requests.get(url=Config['canaries_api']['url_api'] + '/' + Config['canaries_api']['version_api'] + '/canaries', params={
-        'email': 'holubludek@cubemail.ga'
-    }, headers=auth.getHeader())
+    try:
+        r = requests.get(url=Config['canaries_api']['url_api'] + '/' + Config['canaries_api']['version_api'] + '/canaries', params={
+            'email': mail
+        }, headers=auth.getHeader())
 
-    data = r.json()
-    print(data)
+        data = r.json()
+        print(data)
 
-except Exception as error:
-    print('Error: %s' % error)
-    exit
+    except Exception as error:
+        print('Error: %s' % error)
+        exit
+
+#search_canary()

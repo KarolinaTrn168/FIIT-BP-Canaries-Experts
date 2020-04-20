@@ -2,6 +2,7 @@ import peewee
 from peewee import *
 import json
 from datetime import datetime
+import search_canaries
 
 def connect_sql():
     with open('config.json', encoding='utf8') as config_file:
@@ -29,7 +30,7 @@ def mail_information(mail, password, IP, time):
         db.connect()
     
     query = Mail_Passwd_IP.select().where(Mail_Passwd_IP.mail == mail and Mail_Passwd_IP.password == password and Mail_Passwd_IP.IP == IP)
-    print('query:', query)
+    print('query:', query)    #IP prazdne
     if Mail_Passwd_IP.select().where(Mail_Passwd_IP.mail == mail and Mail_Passwd_IP.password == password and Mail_Passwd_IP.IP == IP):
         if not db.is_closed():
            db.close()
@@ -38,6 +39,7 @@ def mail_information(mail, password, IP, time):
     else:    
         print('je to:', mail, password, IP, time)
         Mail_Passwd_IP.insert(mail=mail, password=password, IP=IP, time=datetime.fromtimestamp(time)).execute()
+        search_canaries.search_canary(mail)
 
     if not db.is_closed():
             db.close()
