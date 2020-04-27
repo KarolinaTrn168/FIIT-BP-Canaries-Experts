@@ -2,5 +2,10 @@ canaries
 uploads 
 __pycache__
 config.json
-*.txt
+logs.txt
+postfix.txt
+vstup1.txt
+vstup2.txt
+vystup.txt
+vystup1.txt
 .vscode
