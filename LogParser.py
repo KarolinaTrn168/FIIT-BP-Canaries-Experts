@@ -31,17 +31,16 @@ def siemMessage(message):
 
 #registrovanie potrebnych expertov 
 registerExpert(experts.DovecotExpert)
-registerExpert(experts.IMAPExpert)
 registerExpert(experts.PostfixExpert)
-registerExpert(experts.SMTPExpert)
+#registerExpert(experts.SMTPExpert)
 
-file1 = open('vstup2.txt', 'w')
+file1 = open('vstup1.txt', 'w')
 #toto mozno extra.. 
 #vyberanie logov
 def getLog():    
     logs = []
     #for x in range(r.llen('log_queue')):
-    for x in range(5000):
+    for x in range(50000):
         logs.append(json.loads(r.lindex('log_queue', x), strict=False))
     #print(logs)
     return logs

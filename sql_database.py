@@ -11,17 +11,36 @@ def connect_sql():
     db = peewee.MySQLDatabase(Config['mysql']['db_sql'], host=Config['mysql']['host_sql'], user=Config['mysql']['user_sql'], passwd=Config['mysql']['password_sql'], charset='utf8mb4')
     return db
 
-class Mail_Passwd_IP(peewee.Model):
+class SMTP(peewee.Model):
     id = peewee.BigAutoField(unique=True, index=True, primary_key=True)
+    time = peewee.DateTimeField()
     mail = peewee.CharField()
-    password = peewee.CharField()           #trying password 
+    try_password = peewee.CharField()            
     IP = peewee.CharField()
-    time = DateTimeField()
+    status = peewee.CharField()
+    method = peewee.CharField()
+    service = peewee.CharField()
 
     class Meta:
         database = connect_sql() 
-        table_name = 'Mail_Passwd_IP'    
+        table_name = 'SMTP'    
 
+class IMAP(peewee.Model):
+    id = peewee.BigAutoField(unique=True, index=True, primary_key=True)
+    time = peewee.DateTimeField()
+    mail = peewee.CharField()           #contains sensitive data
+    password = peewee.CharField()            
+    Lip = peewee.CharField()
+    Rip = peewee.CharField()
+    LPort = peewee.IntegerField()
+    RPort = peewee.IntegerField()
+    status = peewee.CharField()
+    service = peewee.CharField()
+    method = peewee.CharField()
+
+    class Meta:
+        database = connect_sql() 
+        table_name = 'IMAP'
 
 def mail_information(mail, password, IP, time):
     db = connect_sql()
@@ -29,16 +48,16 @@ def mail_information(mail, password, IP, time):
     if db.is_closed():
         db.connect()
     
-    query = Mail_Passwd_IP.select().where(Mail_Passwd_IP.mail == mail and Mail_Passwd_IP.password == password and Mail_Passwd_IP.IP == IP)
+    query = SMTP.select().where(SMTP.mail == mail and SMTP.try_password == password and SMTP.IP == IP)
     print('query:', query)    #IP prazdne
-    if Mail_Passwd_IP.select().where(Mail_Passwd_IP.mail == mail and Mail_Passwd_IP.password == password and Mail_Passwd_IP.IP == IP):
+    if SMTP.select().where(SMTP.mail == mail and SMTP.try_password == password and SMTP.IP == IP):
         if not db.is_closed():
            db.close()
         print('uz je')
         return 1
     else:    
         print('je to:', mail, password, IP, time)
-        Mail_Passwd_IP.insert(mail=mail, password=password, IP=IP, time=datetime.fromtimestamp(time)).execute()
+        SMTP.insert(mail=mail, try_password=password, IP=IP, time=datetime.fromtimestamp(time)).execute()
         search_canaries.search_canary(mail)
 
     if not db.is_closed():

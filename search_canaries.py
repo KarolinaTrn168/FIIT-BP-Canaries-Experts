@@ -117,4 +117,4 @@ def search_canary(mail):
         print('Error: %s' % error)
         exit
 
-#search_canary()
+#search_canary('Ivan.Kral@cloudmail.ga')

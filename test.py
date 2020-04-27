@@ -16,12 +16,16 @@ print(r.keys())
 #r.set('mail_list', 0)
 #print(r.keys())
 #r.lpop('mail_list')
-for x in range(11):
-    print(r.lindex('mail_list', x))
 
-for x in range(5):
-    print(r.lindex('log_queue', x))
 
+#for x in range(50):
+#    print(r.lindex('log_queue', x))
+
+with open('logs.txt', 'w') as file:
+    #for x in range(50):
+    for x in range(r.llen('log_queue')):
+        json.dump((json.loads(r.lindex('log_queue', x), strict=False)), file)
+        file.write('\n')     
 
 
 
