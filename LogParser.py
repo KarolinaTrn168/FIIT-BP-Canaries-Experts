@@ -26,29 +26,32 @@ def registerExpert(cls):
 #informuj koho treba..
 def siemMessage(message):
     print(message)
-    json.dump(message, file1)
-    file1.write('\n') 
+    # json.dump(message, file1)
+    # file1.write('\n') 
 
-#registrovanie potrebnych expertov 
-registerExpert(experts.DovecotExpert)
+registerExpert(experts.DovecotExpert) 
 registerExpert(experts.PostfixExpert)
-#registerExpert(experts.SMTPExpert)
 
-file1 = open('vstup1.txt', 'w')
 #toto mozno extra.. 
 #vyberanie logov
 def getLog():    
     logs = []
     #for x in range(r.llen('log_queue')):
-    for x in range(50000):
-        logs.append(json.loads(r.lindex('log_queue', x), strict=False))
+    for x in range(50):
+        try:
+            logs.append(json.loads(r.lindex('log_queue', x), strict=False))
+        except:
+            print(r.lindex('log_queue', x))
     #print(logs)
     return logs
    
 #zatial berie vsetky logy, ktore dam do logs... neskor by mal tahat logy, vzdy ked pridu nove 
+file = open('all_logs.txt', 'w')
 logy = getLog()
 while logy:
-    log = logy[0]
+    log = logy[0] 
+    json.dump(log, file)
+    file.write('\n')
     r.rpush('mail_list', json.dumps({'time':log['time'], 'message':log['message'], 'program':log['program']}))
     for e in modules:       #posle log kazdemu expertovi
         if log['program'] in e['types']:        #ak expert akceptuje typ programu, dany expert recievne log a tam ho spracuje             

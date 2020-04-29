@@ -17,11 +17,13 @@ class authProvider:
         self.password = password
 
     def tryLogin(self):
+        Config = open_config()
+
         # token_type neexistuje alebo token neexistuje alebo expires neexistuje alebo cas uz vyprsal - teda token je neplatny - treba novy
         if not self.token_type or self.token or (not self.expires) or (self.expires and (self.expires < datetime.datetime.now())):
             # posli request na server a skus sa prihlasit
             try:
-                r = requests.request(method='post', url='https://canary1.demo-cert.sk/v1/auth/login', data={
+                r = requests.request(method='post', url=Config['canaries_api']['url_api'] + '/' + Config['canaries_api']['version_api'] + '/auth/login', data={
                     'username': self.username,
                     'password': self.password
                 })
@@ -42,8 +44,7 @@ class authProvider:
                             data['expires'] - 5, self._refreshToken)
                         self.timer.start()
 
-                        print('Successfully logged in as "%s". Token expires on: %s' % (
-                            self.username, self.expires.strftime('%Y-%m-%d %H:%M:%S')))
+                        #print('Successfully logged in as "%s". Token expires on: %s' % (self.username, self.expires.strftime('%Y-%m-%d %H:%M:%S')))
                     except:
                         raise
 
@@ -60,8 +61,10 @@ class authProvider:
 
     #obnovenie token predtym ako vyprsi
     def _refreshToken(self):
+        Config = open_config()
+
         try:
-            r = requests.request(method='post', url='https://canary1.demo-cert.sk/v1/auth/refresh_token',
+            r = requests.request(method='post', url=Config['canaries_api']['url_api'] + '/' + Config['canaries_api']['version_api'] + '/auth/refresh_token',
                                  headers={'Authorization': '%s %s' % (self.token_type, self.token)})
             data = r.json()
             try:
@@ -89,6 +92,10 @@ class authProvider:
         #vrat header pre dalsie requesty
         return {'Authorization': '%s %s' % (self.token_type, self.token)}
 
+    def __del__(self):
+        if self.timer and self.timer.isAlive():
+            self.timer.cancel()
+
 
 # vytvoris si instanciu AuthProvidera:
 def open_config():
@@ -96,7 +103,7 @@ def open_config():
         Config = json.load(config_file)
     return Config
 
-def authorization(authProvidor):
+def authorization(authProvider):
     Config = open_config()
     auth = authProvider(username=Config['canaries_api']['username_api'], password=Config['canaries_api']['password_api'])
     return auth
@@ -104,17 +111,64 @@ def authorization(authProvidor):
 def search_canary(mail):
     auth = authorization(authProvider)
     Config = open_config()
+    token = auth.getHeader()
 
     try:
         r = requests.get(url=Config['canaries_api']['url_api'] + '/' + Config['canaries_api']['version_api'] + '/canaries', params={
             'email': mail
-        }, headers=auth.getHeader())
+        }, headers=token)
 
         data = r.json()
-        print(data)
+        #print(data)
+        try:
+            if data['details'] == 'Canary does not exist':      #canary does not exist
+                return data
+        except:
+            if data['testing'] == False:           #canary is not a testing one
+                uuid = data['uuid']
+                try:
+                    t = requests.get(url=Config['canaries_api']['url_api'] + '/' + Config['canaries_api']['version_api'] + '/sites' + '/' + uuid , headers=token)
+                    sites = t.json()
+                except Exception as error:
+                    print('Error: %s' % error)
+                    exit
+                try:
+                    t = requests.get(url=Config['canaries_api']['url_api'] + '/' + Config['canaries_api']['version_api'] + '/domains' + '/' + uuid , headers=token)
+                    domains = t.json()
+                except Exception as error:
+                    print('Error: %s' % error)
+                    exit
+                return [sites, domains, data]
+
+            elif data['testing'] == True:       #canary is a testing one
+                uuid = data['uuid']
+                try:
+                    t = requests.get(url=Config['canaries_api']['url_api'] + '/' + Config['canaries_api']['version_api'] + '/sites' + '/' + uuid , headers=token)
+                    sites = t.json()
+                except Exception as error:
+                    print('Error: %s' % error)
+                    exit                
+                try:
+                    t = requests.get(url=Config['canaries_api']['url_api'] + '/' + Config['canaries_api']['version_api'] + '/domains' + '/' + uuid , headers=token)
+                    domains = t.json()
+                except Exception as error:
+                    print('Error: %s' % error)
+                    exit
+                return [sites, domains, data]
 
     except Exception as error:
         print('Error: %s' % error)
         exit
 
-#search_canary('Ivan.Kral@cloudmail.ga')
+
+#search_canary('Ivan.Kral@cloudmail.ga')[0][search_canary('Ivan.Kral@cloudmail.ga')[2]['uuid']]
+
+print(search_canary('Ivan.Kral@cloudmail.ga')[2])
+
+
+# if search_canary('Ivan.Kral@cloudmail.ga') == 0:
+#      print('NOPE')
+# elif search_canary('Ivan.Kral@cloudmail.ga') == 1:
+#      print('YES')
+# else:
+#     print('neexistuje.')

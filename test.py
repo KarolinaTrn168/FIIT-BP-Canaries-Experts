@@ -1,5 +1,7 @@
 import redis 
+import re 
 import json
+import base64
 
 with open('config.json', encoding='utf8') as config_file:
         Config = json.load(config_file)
@@ -18,14 +20,27 @@ print(r.keys())
 #r.lpop('mail_list')
 
 
-#for x in range(50):
-#    print(r.lindex('log_queue', x))
+# for x in range(50):
+#     print(r.lindex('log_queue', x))
 
-with open('logs.txt', 'w') as file:
-    #for x in range(50):
-    for x in range(r.llen('log_queue')):
-        json.dump((json.loads(r.lindex('log_queue', x), strict=False)), file)
-        file.write('\n')     
+base64_message = 'AGNvbWJpbmVkQGN1YmVtYWlsLmdhAHRlc3Q'
+base64_message += "=" * ((4 - len(base64_message) % 4) % 4)
+base64_bytes = base64_message.encode('ascii')
+message_bytes = base64.b64decode(base64_bytes)
+message = message_bytes.decode('ascii')
+print(message)
+
+
+
+
+# self.Mail = re.compile(r'(?:\.?)([\w\-_+#~!$&\'\.]+(?<!\.)(@|[ ]?\(?[ ]?(at|AT)[ ]?\)?[ ]?)(?<!\.)[\w]+[\w\-\.]*\.[a-zA-Z-]{2,3})(?:[^\w])')
+# matchMail = self.Mail.search('AGNvbWJpbmVkQGN1YmVtYWlsLmdhAHRlc3Q')
+
+# with open('logs.txt', 'w') as file:
+#     #for x in range(50):
+#     for x in range(r.llen('log_queue')):
+#         json.dump((json.loads(r.lindex('log_queue', x), strict=False)), file)
+#         file.write('\n')     
 
 
 
