@@ -18,6 +18,8 @@ class DovecotExpert:
     #prijatie logu
     def receive(self, log, r):    
 
+        #print(search_canaries.search_canary('benesrene@cloudmail.ga')[2]) 
+
         self.Mail = re.compile(r'(?:\.?)([\w\-_+#~!$&\'\.]+(?<!\.)(@|[ ]?\(?[ ]?(at|AT)[ ]?\)?[ ]?)(?<!\.)[\w]+[\w\-\.]*\.[a-zA-Z-]{2,3})(?:[^\w])')
         matchMail = self.Mail.search(log['message'])
 

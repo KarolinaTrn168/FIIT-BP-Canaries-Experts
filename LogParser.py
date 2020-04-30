@@ -10,12 +10,6 @@ import search_canaries
 r = connection_redis.connection_redis()
 print(r.keys())
 
-with open('config.json', encoding='utf8') as config_file:
-        Config = json.load(config_file)
-
-# auth = search_canaries.authorization(search_canaries.authProvider)
-# auth = authProvider(username=Config['canaries_api']['username_api'], password=Config['canaries_api']['password_api'])
-
 #zoznam expertov, ktory su zaregistrovany
 modules = []
 #zoznam notifikacnych kanalov - email, sms, SIEM, push notifikacie  -- zatial neriesim 
@@ -42,21 +36,14 @@ registerExpert(experts.PostfixExpert)
 #vyberanie logov
 def getLog():    
     logs = []
-<<<<<<< HEAD
+
     #for x in range(r.llen('log_queue')):
-    for x in range(50):
-        try:
-            logs.append(json.loads(r.lindex('log_queue', x), strict=False))
-        except:
-            print(r.lindex('log_queue', x))
-=======
-   # for x in range(r.llen('log_queue')):
-    for x in range(50000):
+    for x in range(5000):
       try:
         logs.append(json.loads(r.lindex('log_queue', x).decode('utf-8'), strict=False))
       except:
          print(r.lindex('log_queue', x))
->>>>>>> c1fb577e42efba8192fd0fc32501d6c99f74f897
+
     #print(logs)
     return logs
    
@@ -72,3 +59,6 @@ while logy:
         if log['program'] in e['types']:        #ak expert akceptuje typ programu, dany expert recievne log a tam ho spracuje             
             e['class'].receive(log, r)
     logy.remove(logy[0])        #vymazem poslany log z logov 
+
+
+
