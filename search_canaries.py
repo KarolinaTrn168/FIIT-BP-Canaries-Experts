@@ -45,7 +45,7 @@ class authProvider:
                             data['expires'] - 5, self._refreshToken)
                         self.timer.start()
 
-                        #print('Successfully logged in as "%s". Token expires on: %s' % (self.username, self.expires.strftime('%Y-%m-%d %H:%M:%S')))
+                        print('Successfully logged in as "%s". Token expires on: %s' % (self.username, self.expires.strftime('%Y-%m-%d %H:%M:%S')))
                     except:
                         raise
 
@@ -164,7 +164,7 @@ def search_canary(mail):
 #search_canary('Ivan.Kral@cloudmail.ga')[0][search_canary('Ivan.Kral@cloudmail.ga')[2]['uuid']]
 
 auth = authorization(authProvider)
-#print(search_canary('benesrene@cloudmail.ga')[2])
+print(search_canary('benesrene@cloudmail.ga')[2])
 #print(search_canary('Ivan.Kral@cloudmail.ga')[2])
 
 
