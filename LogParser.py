@@ -42,8 +42,8 @@ registerExpert(experts.PostfixExpert)
 #vyberanie logov
 def getLog():    
     logs = []
-    for x in range(r.llen('log_queue')):
-    #for x in range(50000):
+   # for x in range(r.llen('log_queue')):
+    for x in range(50000):
       try:
         logs.append(json.loads(r.lindex('log_queue', x).decode('utf-8'), strict=False))
       except:
