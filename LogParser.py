@@ -48,7 +48,7 @@ def getLog():
     return logs
    
 #zatial berie vsetky logy, ktore dam do logs... neskor by mal tahat logy, vzdy ked pridu nove 
-file = open('all_logs.txt', 'w')
+#file = open('all_logs.txt', 'w')
 logy = getLog()
 while logy:
     log = logy[0] 

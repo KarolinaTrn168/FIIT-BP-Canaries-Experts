@@ -3,11 +3,7 @@ uploads
 __pycache__
 config.json
 logs.txt
-postfix.txt
-vstup1.txt
-vstup2.txt
 vystup.txt
-vystup1.txt
 test.py 
 all_logs.txt
 analyzed_logs.txt

@@ -47,7 +47,7 @@ class DovecotExpert:
         self.unequal = re.search(r'!=', log['message'])
         self.used_password = re.search(r'SHA512-CRYPT\((.*)\)', log['message'])
 
-        print(search_canaries.search_canary('benesrene@cloudmail.ga')[2]['testing'])
+        #print(search_canaries.search_canary('benesrene@cloudmail.ga')[2]['testing'])
 
         if matchMail:
             if self.Mismatch_passwd:        #SMTP, attempt to connect failed with wrong password
