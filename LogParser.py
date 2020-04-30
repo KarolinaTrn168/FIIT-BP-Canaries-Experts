@@ -38,7 +38,7 @@ def getLog():
     logs = []
 
     #for x in range(r.llen('log_queue')):
-    for x in range(5000):
+    for x in range(20):
       try:
         logs.append(json.loads(r.lindex('log_queue', x).decode('utf-8'), strict=False))
       except:
@@ -52,8 +52,8 @@ file = open('all_logs.txt', 'w')
 logy = getLog()
 while logy:
     log = logy[0] 
-    json.dump(log, file)
-    file.write('\n')
+    #json.dump(log, file)
+    #file.write('\n')
     #r.rpush('mail_list', json.dumps({'time':log['time'], 'message':log['message'], 'program':log['program']}))
     for e in modules:       #posle log kazdemu expertovi
         if log['program'] in e['types']:        #ak expert akceptuje typ programu, dany expert recievne log a tam ho spracuje             
