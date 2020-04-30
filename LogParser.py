@@ -48,12 +48,12 @@ def getLog():
     return logs
    
 #zatial berie vsetky logy, ktore dam do logs... neskor by mal tahat logy, vzdy ked pridu nove 
-#file = open('all_logs.txt', 'w')
+file = open('all_logs.txt', 'a')
 logy = getLog()
 while logy:
     log = logy[0] 
-    #json.dump(log, file)
-    #file.write('\n')
+    json.dump(log, file)
+    file.write('\n')
     #r.rpush('mail_list', json.dumps({'time':log['time'], 'message':log['message'], 'program':log['program']}))
     for e in modules:       #posle log kazdemu expertovi
         if log['program'] in e['types']:        #ak expert akceptuje typ programu, dany expert recievne log a tam ho spracuje             

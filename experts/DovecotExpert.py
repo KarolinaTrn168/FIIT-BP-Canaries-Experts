@@ -3,6 +3,8 @@ import json
 import search_canaries
 import base64
 
+file = open('analyzed_logs.txt', 'a')
+
 # Expert Dovecot
 class DovecotExpert:
     #nastavim, ktore programy expert akceptuje
@@ -50,6 +52,8 @@ class DovecotExpert:
         #print(search_canaries.search_canary('benesrene@cloudmail.ga')[2]['testing'])
 
         if matchMail:
+            json.dump(log, file)
+            file.write('\n')
             if self.Mismatch_passwd:        #SMTP, attempt to connect failed with wrong password
                 try:
                     uuid = search_canaries.search_canary(matchMail.group(1))[2]['uuid']
@@ -105,6 +109,9 @@ class DovecotExpert:
                 return
 
         elif self.plain and self.service_imap and self.secured and self.base64:     #IMAP, Successful connection
+            json.dump(log, file)
+            file.write('\n')
+
             base64_message = matchResponse.group(1)
             base64_message += "=" * ((4 - len(base64_message) % 4) % 4)
             base64_bytes = base64_message.encode('ascii')
