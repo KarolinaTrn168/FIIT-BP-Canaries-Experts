@@ -1,14 +1,20 @@
 import json
 import random
 import redis 
-
 import experts
 import connection_redis
+import search_canaries
+
 
 #spojenie s redis
 r = connection_redis.connection_redis()
 print(r.keys())
 
+with open('config.json', encoding='utf8') as config_file:
+        Config = json.load(config_file)
+
+auth = search_canaries.authorization(search_canaries.authProvider)
+# auth = authProvider(username=Config['canaries_api']['username_api'], password=Config['canaries_api']['password_api'])
 
 #zoznam expertov, ktory su zaregistrovany
 modules = []
@@ -37,7 +43,7 @@ registerExpert(experts.PostfixExpert)
 def getLog():    
     logs = []
     #for x in range(r.llen('log_queue')):
-    for x in range(50):
+    for x in range(50000):
         try:
             logs.append(json.loads(r.lindex('log_queue', x), strict=False))
         except:

@@ -3,6 +3,7 @@ import datetime
 from threading import Timer
 import json
 
+global auth 
 
 class authProvider:
     username = None
@@ -96,7 +97,6 @@ class authProvider:
         if self.timer and self.timer.isAlive():
             self.timer.cancel()
 
-
 # vytvoris si instanciu AuthProvidera:
 def open_config():
     with open('config.json', encoding='utf8') as config_file:
@@ -109,7 +109,7 @@ def authorization(authProvider):
     return auth
 
 def search_canary(mail):
-    auth = authorization(authProvider)
+    #auth = authorization(authProvider)
     Config = open_config()
     token = auth.getHeader()
 
@@ -163,7 +163,8 @@ def search_canary(mail):
 
 #search_canary('Ivan.Kral@cloudmail.ga')[0][search_canary('Ivan.Kral@cloudmail.ga')[2]['uuid']]
 
-print(search_canary('Ivan.Kral@cloudmail.ga')[2])
+#auth = authorization(authProvider)
+#print(search_canary('Ivan.Kral@cloudmail.ga')[2])
 
 
 # if search_canary('Ivan.Kral@cloudmail.ga') == 0:
