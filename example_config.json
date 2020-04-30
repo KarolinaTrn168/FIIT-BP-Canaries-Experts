@@ -1,0 +1,14 @@
+{
+	"redis": {
+		"host_redis": "Hostname",
+		"port_redis": "Portnumber",
+		"debug_redis": true
+	}, 
+
+	"canaries_api": {
+		"username_api": "Username",
+		"password_api": "Password",
+		"url_api": "URL",
+		"version_api": "Version"
+	}	
+}

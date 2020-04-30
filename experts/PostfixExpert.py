@@ -32,18 +32,93 @@ class PostfixExpert:
 
         self.proto = re.search(r'proto=ESMTP', log['message'])
 
+        self.host_rejected = re.search(r'Client host rejected:', log['message'])
+        self.relay_denied = re.search(r'Relay access denied', log['message'])
+
 
         if self.unknown_connection:
             return
-        elif self.method and self.username and matchMail:
-            self.callback({'expert': 'SMTP Expert',
-                           'IP': self.IP.group(1),
-                           'message': 'SUCCESSFUL connection to: ' + matchMail.group(1) })
+        elif self.method and self.username and matchMail:       #SMTP, Successful connection
+            try:
+                try:
+                    self.callback({'mail': matchMail.group(1),
+                                'password': 'true',
+                                'IP': self.IP.group(1) if self.IP else None,
+                                'status': 'SUCCESS', 
+                                'domain': search_canaries.search_canary(matchMail.group(1))[1][search_canaries.search_canary(matchMail.group(1))[2]['uuid']],
+                                'site': search_canaries.search_canary(matchMail.group(1))[0][search_canaries.search_canary(matchMail.group(1))[2]['uuid']],
+                                'testing': search_canaries.search_canary(matchMail.group(1))[2]['testing'] })
+                except:
+                    self.callback({'mail': matchMail.group(1),
+                                'password': 'true',
+                                'IP': self.IP.group(1) if self.IP else None,
+                                'status': 'SUCCESS',
+                                'domain': search_canaries.search_canary(matchMail.group(1))[1]['details'],
+                                'site': search_canaries.search_canary(matchMail.group(1))[0]['details'],
+                                'testing': search_canaries.search_canary(matchMail.group(1))[2]['testing'] })
+            except:
+                self.callback({'mail': matchMail.group(1),
+                            'password': 'true',
+                            'IP': self.IP.group(1) if self.IP else None,
+                            'status': 'SUCCESS', 
+                            'details': 'NOT a canary' })
             return
 
-        elif self.noqueue and self.proto and self.from_mail and self.to_mail:
-            self.callback({'expert': 'SMTP Expert',
-                           'message': 'Relay access denied from: ' + self.from_mail.group(1) + ' to: ' + self.to_mail.group(1) + '.'})
+        elif self.noqueue and self.proto and self.from_mail and self.to_mail and self.relay_denied:       #SMTP-Honeypot is used -- Relay access denied
+            try:
+                try:
+                    self.callback({'mail_from': self.from_mail.group(1),
+                                'mail_to': self.to_mail.group(1),
+                                'IP': self.IP.group(1) if self.IP else None,
+                                'status': 'FAIL', 
+                                'domain': search_canaries.search_canary(matchMail.group(1))[1][search_canaries.search_canary(matchMail.group(1))[2]['uuid']],
+                                'site': search_canaries.search_canary(matchMail.group(1))[0][search_canaries.search_canary(matchMail.group(1))[2]['uuid']],
+                                'testing': search_canaries.search_canary(matchMail.group(1))[2]['testing'],
+                                'message': 'Relay access denied' })
+                except:
+                    self.callback({'mail_from': self.from_mail.group(1),
+                                'mail_to': self.to_mail.group(1),
+                                'IP': self.IP.group(1) if self.IP else None,
+                                'status': 'FAIL',
+                                'domain': search_canaries.search_canary(matchMail.group(1))[1]['details'],
+                                'site': search_canaries.search_canary(matchMail.group(1))[0]['details'],
+                                'testing': search_canaries.search_canary(matchMail.group(1))[2]['testing'],
+                                'message': 'Relay access denied' })
+            except:
+                self.callback({'mail_from': self.from_mail.group(1),
+                            'mail_to': self.to_mail.group(1),
+                            'IP': self.IP.group(1) if self.IP else None,
+                            'status': 'FAIL', 
+                            'message': 'Relay access denied' })
+            return
+
+        elif self.noqueue and self.proto and self.from_mail and self.to_mail and self.host_rejected:       #SMTP-Honeypot is used -- Host is rejected
+            try:
+                try:
+                    self.callback({'mail_from': self.from_mail.group(1),
+                                'mail_to': self.to_mail.group(1),
+                                'IP': self.IP.group(1) if self.IP else None,
+                                'status': 'FAIL', 
+                                'domain': search_canaries.search_canary(matchMail.group(1))[1][search_canaries.search_canary(matchMail.group(1))[2]['uuid']],
+                                'site': search_canaries.search_canary(matchMail.group(1))[0][search_canaries.search_canary(matchMail.group(1))[2]['uuid']],
+                                'testing': search_canaries.search_canary(matchMail.group(1))[2]['testing'],
+                                'message': 'Client host rejected - cannot find reverse hostname' })
+                except:
+                    self.callback({'mail_from': self.from_mail.group(1),
+                                'mail_to': self.to_mail.group(1),
+                                'IP': self.IP.group(1) if self.IP else None,
+                                'status': 'FAIL',
+                                'domain': search_canaries.search_canary(matchMail.group(1))[1]['details'],
+                                'site': search_canaries.search_canary(matchMail.group(1))[0]['details'],
+                                'testing': search_canaries.search_canary(matchMail.group(1))[2]['testing'],
+                                'message': 'Client host rejected - cannot find reverse hostname' })
+            except:
+                self.callback({'mail_from': self.from_mail.group(1),
+                            'mail_to': self.to_mail.group(1),
+                            'IP': self.IP.group(1) if self.IP else None,
+                            'status': 'FAIL', 
+                            'message': 'Client host rejected - cannot find reverse hostname' })
+            return
 
         else: 
             return
