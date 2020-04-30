@@ -16,7 +16,8 @@ class DovecotExpert:
 
 
     #prijatie logu
-    def receive(self, log, r):        
+    def receive(self, log, r):    
+
         self.Mail = re.compile(r'(?:\.?)([\w\-_+#~!$&\'\.]+(?<!\.)(@|[ ]?\(?[ ]?(at|AT)[ ]?\)?[ ]?)(?<!\.)[\w]+[\w\-\.]*\.[a-zA-Z-]{2,3})(?:[^\w])')
         matchMail = self.Mail.search(log['message'])
 

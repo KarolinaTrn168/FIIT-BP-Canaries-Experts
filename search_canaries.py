@@ -163,8 +163,10 @@ def search_canary(mail):
 
 #search_canary('Ivan.Kral@cloudmail.ga')[0][search_canary('Ivan.Kral@cloudmail.ga')[2]['uuid']]
 
-#auth = authorization(authProvider)
+auth = authorization(authProvider)
+#print(search_canary('benesrene@cloudmail.ga')[2])
 #print(search_canary('Ivan.Kral@cloudmail.ga')[2])
+
 
 
 # if search_canary('Ivan.Kral@cloudmail.ga') == 0:
