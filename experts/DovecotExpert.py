@@ -5,11 +5,15 @@ import base64
 import logging
 import logging.handlers
 
+
+with open('config.json', encoding='utf8') as config_file:
+      Config = json.load(config_file)
+
 # logger.basicConfig(filename='analyzed.log', level=logging.WARNING, 
 #                     format='%(message)s')
 
-logger = logging.getLogger('experts')
-handler = logging.handlers.SysLogHandler(address='/dev/log')
+logger = logging.getLogger('canary-expert')
+handler = logging.handlers.SysLogHandler(address=(Config['logger']['IP'], Config['logger']['port']), facility=logging.handlers.SysLogHandler.LOG_SYSLOG)
 handler.setFormatter(logging.Formatter('%(message)s'))
 logger.addHandler(handler)
 
@@ -31,7 +35,7 @@ class DovecotExpert:
 
     #prijatie logu
     def receive(self, log, r):    
-
+        logger.info('Checking log message.')
         #print(search_canaries.search_canary('benesrene@cloudmail.ga')[2]) 
 
         self.Mail = re.compile(r'(?:\.?)([\w\-_+#~!$&\'\.]+(?<!\.)(@|[ ]?\(?[ ]?(at|AT)[ ]?\)?[ ]?)(?<!\.)[\w]+[\w\-\.]*\.[a-zA-Z-]{2,3})(?:[^\w])')

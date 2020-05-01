@@ -5,3 +5,11 @@
 {'mail': 'combined@cubemail.ga', 'password': 'test', 'IP': '89.173.33.57', 'status': 'FAIL', 'details': 'NOT a canary'}
 {'mail': 'combined@cubemail.ga', 'password': 'true', 'IP': '185.8.164.42', 'status': 'SUCCESS', 'details': 'NOT a canary'}
 {'mail': 'combined@cubemail.ga', 'password': 'true', 'IP': '185.8.164.42', 'status': 'SUCCESS', 'details': 'NOT a canary'}
+{'mail': 'combined@cubemail.ga', 'IP': '185.8.164.42', 'details': 'NOT a canary', 'status': 'SUCCESS', 'password': 'true'}
+{'IP': '185.8.164.42', 'status': 'SUCCESS', 'password': 'true', 'details': 'NOT a canary', 'mail': 'combined@cubemail.ga'}
+{'password': 'true', 'IP': '185.8.164.42', 'status': 'SUCCESS', 'details': 'NOT a canary', 'mail': 'combined@cubemail.ga'}
+{'status': 'SUCCESS', 'mail': 'combined@cubemail.ga', 'details': 'NOT a canary', 'IP': '185.8.164.42', 'password': 'true'}
+{'status': 'SUCCESS', 'mail': 'combined@cubemail.ga', 'details': 'NOT a canary', 'IP': '185.8.164.42', 'password': 'true'}
+{'IP': '185.8.164.42', 'details': 'NOT a canary', 'mail': 'combined@cubemail.ga', 'status': 'SUCCESS', 'password': 'true'}
+{'details': 'NOT a canary', 'password': 'true', 'IP': '185.8.164.42', 'status': 'SUCCESS', 'mail': 'combined@cubemail.ga'}
+{'mail': 'combined@cubemail.ga', 'details': 'NOT a canary', 'password': 'true', 'IP': '185.8.164.42', 'status': 'SUCCESS'}
