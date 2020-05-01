@@ -54,7 +54,6 @@ while logy:
     log = logy[0] 
     json.dump(log, file)
     file.write('\n')
-    #r.rpush('mail_list', json.dumps({'time':log['time'], 'message':log['message'], 'program':log['program']}))
     for e in modules:       #posle log kazdemu expertovi
         if log['program'] in e['types']:        #ak expert akceptuje typ programu, dany expert recievne log a tam ho spracuje             
             e['class'].receive(log, r)

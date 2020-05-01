@@ -1,4 +1,10 @@
 import re
+import logging
+
+logging.basicConfig(filename='analyzed.log', level=logging.WARNING, 
+                    format='%(message)s')
+
+file = open('analyzed_logs.txt', 'a')
 
 # Expert Postfix
 class PostfixExpert:
@@ -39,9 +45,12 @@ class PostfixExpert:
         if self.unknown_connection:
             return
         elif self.method and self.username and matchMail:       #SMTP, Successful connection
+            json.dump(log, file)
+            file.write('\n')
+            r.rpush('mail_list', json.dumps({'time':log['time'], 'message':log['message'], 'program':log['program']}))
             try:
                 try:
-                    self.callback({'mail': matchMail.group(1),
+                    logging.warning({'mail': matchMail.group(1),
                                 'password': 'true',
                                 'IP': self.IP.group(1) if self.IP else None,
                                 'status': 'SUCCESS', 
@@ -49,7 +58,7 @@ class PostfixExpert:
                                 'site': search_canaries.search_canary(matchMail.group(1))[0][search_canaries.search_canary(matchMail.group(1))[2]['uuid']],
                                 'testing': search_canaries.search_canary(matchMail.group(1))[2]['testing'] })
                 except:
-                    self.callback({'mail': matchMail.group(1),
+                    logging.warning({'mail': matchMail.group(1),
                                 'password': 'true',
                                 'IP': self.IP.group(1) if self.IP else None,
                                 'status': 'SUCCESS',
@@ -57,7 +66,7 @@ class PostfixExpert:
                                 'site': search_canaries.search_canary(matchMail.group(1))[0]['details'],
                                 'testing': search_canaries.search_canary(matchMail.group(1))[2]['testing'] })
             except:
-                self.callback({'mail': matchMail.group(1),
+                logging.warning({'mail': matchMail.group(1),
                             'password': 'true',
                             'IP': self.IP.group(1) if self.IP else None,
                             'status': 'SUCCESS', 
@@ -65,9 +74,12 @@ class PostfixExpert:
             return
 
 #        elif self.noqueue and self.proto and self.from_mail and self.to_mail and self.relay_denied:       #SMTP-Honeypot is used -- Relay access denied
-#            try:
+#           json.dump(log, file)
+#           file.write('\n') 
+#           r.rpush('mail_list', json.dumps({'time':log['time'], 'message':log['message'], 'program':log['program']}))
+#           try:
 #                try:
-#                    self.callback({'mail_from': self.from_mail.group(1),
+#                    logging.warning({'mail_from': self.from_mail.group(1),
 #                                'mail_to': self.to_mail.group(1),
 #                                'IP': self.IP.group(1) if self.IP else None,
 #                                'status': 'FAIL', 
@@ -76,7 +88,7 @@ class PostfixExpert:
 #                                'testing': search_canaries.search_canary(matchMail.group(1))[2]['testing'],
 #                                'message': 'Relay access denied' })
 #                except:
-#                    self.callback({'mail_from': self.from_mail.group(1),
+#                    logging.warning({'mail_from': self.from_mail.group(1),
 #                                'mail_to': self.to_mail.group(1),
 #                                'IP': self.IP.group(1) if self.IP else None,
 #                                'status': 'FAIL',
@@ -85,7 +97,7 @@ class PostfixExpert:
 #                                'testing': search_canaries.search_canary(matchMail.group(1))[2]['testing'],
 #                                'message': 'Relay access denied' })
 #            except:
-#                self.callback({'mail_from': self.from_mail.group(1),
+#                logging.warning({'mail_from': self.from_mail.group(1),
 #                            'mail_to': self.to_mail.group(1),
 #                            'IP': self.IP.group(1) if self.IP else None,
 #                            'status': 'FAIL', 
@@ -93,9 +105,12 @@ class PostfixExpert:
 #            return
 
 #        elif self.noqueue and self.proto and self.from_mail and self.to_mail and self.host_rejected:       #SMTP-Honeypot is used -- Host is rejected
-#            try:
+#           json.dump(log, file)
+#            file.write('\n') 
+#           r.rpush('mail_list', json.dumps({'time':log['time'], 'message':log['message'], 'program':log['program']}))
+#           try:
 #                try:
-#                    self.callback({'mail_from': self.from_mail.group(1),
+#                    logging.warning({'mail_from': self.from_mail.group(1),
 #                                'mail_to': self.to_mail.group(1),
 #                                'IP': self.IP.group(1) if self.IP else None,
 #                                'status': 'FAIL', 
@@ -104,7 +119,7 @@ class PostfixExpert:
 #                                'testing': search_canaries.search_canary(matchMail.group(1))[2]['testing'],
 #                                'message': 'Client host rejected - cannot find reverse hostname' })
 #                except:
-#                    self.callback({'mail_from': self.from_mail.group(1),
+#                    logging.warning({'mail_from': self.from_mail.group(1),
 #                                'mail_to': self.to_mail.group(1),
 #                                'IP': self.IP.group(1) if self.IP else None,
 #                                'status': 'FAIL',
@@ -113,7 +128,7 @@ class PostfixExpert:
 #                                'testing': search_canaries.search_canary(matchMail.group(1))[2]['testing'],
 #                                'message': 'Client host rejected - cannot find reverse hostname' })
 #            except:
-#                self.callback({'mail_from': self.from_mail.group(1),
+#                logging.warning({'mail_from': self.from_mail.group(1),
 #                            'mail_to': self.to_mail.group(1),
 #                            'IP': self.IP.group(1) if self.IP else None,
 #                            'status': 'FAIL', 

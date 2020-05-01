@@ -2,8 +2,20 @@ import re
 import json
 import search_canaries
 import base64
+import logging
+import logging.handlers
+
+# logger.basicConfig(filename='analyzed.log', level=logging.WARNING, 
+#                     format='%(message)s')
+
+logger = logging.getLogger('experts')
+handler = logging.handlers.SysLogHandler(address='/dev/log')
+handler.setFormatter(logging.Formatter('%(message)s'))
+logger.addHandler(handler)
 
 file = open('analyzed_logs.txt', 'a')
+
+
 
 # Expert Dovecot
 class DovecotExpert:
@@ -54,12 +66,13 @@ class DovecotExpert:
         if matchMail:
             json.dump(log, file)
             file.write('\n')
+            r.rpush('mail_list', json.dumps({'time':log['time'], 'message':log['message'], 'program':log['program']}))
             if self.Mismatch_passwd:        #SMTP, attempt to connect failed with wrong password
                 try:
                     uuid = search_canaries.search_canary(matchMail.group(1))[2]['uuid']
                     print(uuid)
                     try:
-                        self.callback({'mail': matchMail.group(1),
+                        logger.warning({'mail': matchMail.group(1),
                                     'password': self.Password.group(1) if self.Password else None,
                                     'IP': self.IP.group(1) if self.IP else None,
                                     'status': 'FAIL', 
@@ -67,7 +80,7 @@ class DovecotExpert:
                                     'site': search_canaries.search_canary(matchMail.group(1))[0][search_canaries.search_canary(matchMail.group(1))[2]['uuid']],
                                     'testing': search_canaries.search_canary(matchMail.group(1))[2]['testing'] })
                     except:
-                        self.callback({'mail': matchMail.group(1),
+                        logger.warning({'mail': matchMail.group(1),
                                     'password': self.Password.group(1) if self.Password else None,
                                     'IP': self.IP.group(1) if self.IP else None,
                                     'status': 'FAIL',
@@ -75,7 +88,7 @@ class DovecotExpert:
                                     'site': search_canaries.search_canary(matchMail.group(1))[0]['details'],
                                     'testing': search_canaries.search_canary(matchMail.group(1))[2]['testing'] })
                 except:
-                    self.callback({'mail': matchMail.group(1),
+                    logger.warning({'mail': matchMail.group(1),
                                 'password': self.Password.group(1) if self.Password else None,
                                 'IP': self.IP.group(1) if self.IP else None,
                                 'status': 'FAIL', 
@@ -85,7 +98,7 @@ class DovecotExpert:
             elif self.SHA512 and self.unequal:      #IMAP, attempt to connect failed with wrong password
                 try:
                     try:
-                        self.callback({'mail': matchMail.group(1),
+                        logger.warning({'mail': matchMail.group(1),
                                     'password': self.used_password.group(1) if self.used_password else None,
                                     'IP': self.IP.group(1) if self.IP else None,
                                     'status': 'FAIL', 
@@ -93,7 +106,7 @@ class DovecotExpert:
                                     'site': search_canaries.search_canary(matchMail.group(1))[0][search_canaries.search_canary(matchMail.group(1))[2]['uuid']],
                                     'testing': search_canaries.search_canary(matchMail.group(1))[2]['testing'] })
                     except:
-                        self.callback({'mail': matchMail.group(1),
+                        logger.warning({'mail': matchMail.group(1),
                                     'password': self.used_password.group(1) if self.used_password else None,
                                     'IP': self.IP.group(1) if self.IP else None,
                                     'status': 'FAIL',
@@ -101,16 +114,18 @@ class DovecotExpert:
                                     'site': search_canaries.search_canary(matchMail.group(1))[0]['details'],
                                     'testing': search_canaries.search_canary(matchMail.group(1))[2]['testing'] })
                 except:
-                    self.callback({'mail': matchMail.group(1),
+                    logger.warning({'mail': matchMail.group(1),
                                 'password': self.used_password.group(1) if self.used_password else None,
                                 'IP': self.IP.group(1) if self.IP else None,
                                 'status': 'FAIL', 
                                 'details': 'NOT a canary' })
+                    #formatter = logging.Formatter('Python: {"mail":"%(matchMail.group(1))s", "password":"%(slef.used_password.group(1))s", "IP":"%(selft.IP.group(1))s", "status":"FAIL", "detail":"NOT a canary"}')
                 return
 
         elif self.plain and self.service_imap and self.secured and self.base64:     #IMAP, Successful connection
             json.dump(log, file)
             file.write('\n')
+            r.rpush('mail_list', json.dumps({'time':log['time'], 'message':log['message'], 'program':log['program']}))
 
             base64_message = matchResponse.group(1)
             base64_message += "=" * ((4 - len(base64_message) % 4) % 4)
@@ -125,7 +140,7 @@ class DovecotExpert:
             matchPass = self.Pass.search(final_response)
             try:
                 try:
-                    self.callback({'mail': matchMail2.group(1),
+                    logger.warning({'mail': matchMail2.group(1),
                                 #'password': matchPass.group(1) if self.Pass else None,
                                 'password': 'true',
                                 'IP': matchlip.group(1) if self.lip else None,
@@ -134,7 +149,7 @@ class DovecotExpert:
                                 'site': search_canaries.search_canary(matchMail2.group(1))[0][search_canaries.search_canary(matchMail2.group(1))[2]['uuid']],
                                 'testing': search_canaries.search_canary(matchMail2.group(1))[2]['testing'] })
                 except:
-                    self.callback({'mail': matchMail2.group(1),
+                    logger.warning({'mail': matchMail2.group(1),
                                 #'password': matchPass.group(1) if self.Pass else None,
                                 'password': 'true',
                                 'IP': matchlip.group(1) if self.lip else None,
@@ -143,13 +158,13 @@ class DovecotExpert:
                                 'site': search_canaries.search_canary(matchMail2.group(1))[0]['details'],
                                 'testing': search_canaries.search_canary(matchMail2.group(1))[2]['testing'] })
             except:
-                self.callback({'mail': matchMail2.group(1),
+                logger.warning({'mail': matchMail2.group(1),
                             #'password': matchPass.group(1) if self.Pass else None,
                             'password': 'true',
                             'IP': matchlip.group(1) if self.lip else None,
                             'status': 'SUCCESS', 
                             'details': 'NOT a canary' })
-            return
+                return
 
         else:
             return 

@@ -20,15 +20,19 @@ print(r.keys())
 #r.lpop('mail_list')
 
 
-# for x in range(50):
-#     print(r.lindex('log_queue', x))
+# r.delete('mail_list')
+# print(r.keys())
 
-base64_message = 'AGNvbWJpbmVkQGN1YmVtYWlsLmdhAHRlc3Q'
-base64_message += "=" * ((4 - len(base64_message) % 4) % 4)
-base64_bytes = base64_message.encode('ascii')
-message_bytes = base64.b64decode(base64_bytes)
-message = message_bytes.decode('ascii')
-print(message)
+
+for x in range(r.llen('mail_list')):
+    print(r.lindex('mail_list', x))
+
+# base64_message = 'AGNvbWJpbmVkQGN1YmVtYWlsLmdhAHRlc3Q'
+# base64_message += "=" * ((4 - len(base64_message) % 4) % 4)
+# base64_bytes = base64_message.encode('ascii')
+# message_bytes = base64.b64decode(base64_bytes)
+# message = message_bytes.decode('ascii')
+# print(message)
 
 
 
