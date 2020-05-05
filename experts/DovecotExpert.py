@@ -4,35 +4,25 @@ import search_canaries
 import base64
 import logging
 import logging.handlers
-#from logging.handlers.SysLogHandler import LOG_SYSLOG
-
 
 with open('config.json', encoding='utf8') as config_file:
       Config = json.load(config_file)
 
-# logger.basicConfig(filename='analyzed.log', level=logging.WARNING, 
-#                     format='%(message)s')
 
 logger = logging.getLogger('canary-experts')
 logger.setLevel(logging.INFO)
-# handler = logging.handlers.SysLogHandler(address=(Config['logger']['IP'], Config['logger']['port']), facility=logging.handlers.SysLogHandler.LOG_SYSLOG)
-# handler.setFormatter(logging.Formatter('%(message)s'))
-# logger.addHandler(handler)
+
 syslog = logging.handlers.SysLogHandler(address='/dev/log')
 syslog.setFormatter(logging.Formatter(
     '%(name)s: [%(levelname)s] %(message)s'
 ))
 logger.addHandler(syslog)
 
-remote_syslog = logging.handlers.SysLogHandler(address=('localhost', 12345), facility=logging.handlers.SysLogHandler.LOG_SYSLOG)
+remote_syslog = logging.handlers.SysLogHandler(address=(Config['logger']['IP'], Config['logger']['port']), facility=logging.handlers.SysLogHandler.LOG_SYSLOG)
 remote_syslog.setFormatter(logging.Formatter(
     '%(name)s: [%(levelname)s] %(message)s'
 ))
 logger.addHandler(remote_syslog)
-
-
-
-#logger.addHandler(syslog)
 
 
 
@@ -55,7 +45,6 @@ class DovecotExpert:
     #prijatie logu
     def receive(self, log, r):    
         logger.info('Checking log message.')
-        #print(search_canaries.search_canary('benesrene@cloudmail.ga')[2]) 
 
         self.Mail = re.compile(r'(?:\.?)([\w\-_+#~!$&\'\.]+(?<!\.)(@|[ ]?\(?[ ]?(at|AT)[ ]?\)?[ ]?)(?<!\.)[\w]+[\w\-\.]*\.[a-zA-Z-]{2,3})(?:[^\w])')
         matchMail = self.Mail.search(log['message'])
@@ -84,32 +73,46 @@ class DovecotExpert:
         self.unequal = re.search(r'!=', log['message'])
         self.used_password = re.search(r'SHA512-CRYPT\((.*)\)', log['message'])
 
-        #print(search_canaries.search_canary('benesrene@cloudmail.ga')[2]['testing'])
-
         if matchMail:
             json.dump(log, file)
             file.write('\n')
             r.rpush('mail_list', json.dumps({'time':log['time'], 'message':log['message'], 'program':log['program']}))
             if self.Mismatch_passwd:        #SMTP, attempt to connect failed with wrong password
                 try:
-                    uuid = search_canaries.search_canary(matchMail.group(1))[2]['uuid']
-                    print(uuid)
-                    try:
+                    if(self.Password == search_canaries.search_canary(matchMail.group(1))[2]['password']): 
+                        try:
                         logger.warning({'mail': matchMail.group(1),
-                                    'password': self.Password.group(1) if self.Password else None,
-                                    'IP': self.IP.group(1) if self.IP else None,
-                                    'status': 'FAIL', 
-                                    'domain': search_canaries.search_canary(matchMail.group(1))[1][search_canaries.search_canary(matchMail.group(1))[2]['uuid']],
-                                    'site': search_canaries.search_canary(matchMail.group(1))[0][search_canaries.search_canary(matchMail.group(1))[2]['uuid']],
-                                    'testing': search_canaries.search_canary(matchMail.group(1))[2]['testing'] })
-                    except:
-                        logger.warning({'mail': matchMail.group(1),
-                                    'password': self.Password.group(1) if self.Password else None,
-                                    'IP': self.IP.group(1) if self.IP else None,
-                                    'status': 'FAIL',
-                                    'domain': search_canaries.search_canary(matchMail.group(1))[1]['details'],
-                                    'site': search_canaries.search_canary(matchMail.group(1))[0]['details'],
-                                    'testing': search_canaries.search_canary(matchMail.group(1))[2]['testing'] })
+                                        'password': self.Password.group(1) if self.Password else None,
+                                        'IP': self.IP.group(1) if self.IP else None,
+                                        'status': 'false FAIL', 
+                                        'domain': search_canaries.search_canary(matchMail.group(1))[1][search_canaries.search_canary(matchMail.group(1))[2]['uuid']],
+                                        'site': search_canaries.search_canary(matchMail.group(1))[0][search_canaries.search_canary(matchMail.group(1))[2]['uuid']],
+                                        'testing': search_canaries.search_canary(matchMail.group(1))[2]['testing'] })
+                        except:
+                            logger.warning({'mail': matchMail.group(1),
+                                        'password': self.Password.group(1) if self.Password else None,
+                                        'IP': self.IP.group(1) if self.IP else None,
+                                        'status': 'false FAIL',
+                                        'domain': search_canaries.search_canary(matchMail.group(1))[1]['details'],
+                                        'site': search_canaries.search_canary(matchMail.group(1))[0]['details'],
+                                        'testing': search_canaries.search_canary(matchMail.group(1))[2]['testing'] })
+                    else: 
+                        try:
+                            logger.warning({'mail': matchMail.group(1),
+                                        'password': self.Password.group(1) if self.Password else None,
+                                        'IP': self.IP.group(1) if self.IP else None,
+                                        'status': 'FAIL', 
+                                        'domain': search_canaries.search_canary(matchMail.group(1))[1][search_canaries.search_canary(matchMail.group(1))[2]['uuid']],
+                                        'site': search_canaries.search_canary(matchMail.group(1))[0][search_canaries.search_canary(matchMail.group(1))[2]['uuid']],
+                                        'testing': search_canaries.search_canary(matchMail.group(1))[2]['testing'] })
+                        except:
+                            logger.warning({'mail': matchMail.group(1),
+                                        'password': self.Password.group(1) if self.Password else None,
+                                        'IP': self.IP.group(1) if self.IP else None,
+                                        'status': 'FAIL',
+                                        'domain': search_canaries.search_canary(matchMail.group(1))[1]['details'],
+                                        'site': search_canaries.search_canary(matchMail.group(1))[0]['details'],
+                                        'testing': search_canaries.search_canary(matchMail.group(1))[2]['testing'] })
                 except:
                     logger.warning({'mail': matchMail.group(1),
                                 'password': self.Password.group(1) if self.Password else None,
