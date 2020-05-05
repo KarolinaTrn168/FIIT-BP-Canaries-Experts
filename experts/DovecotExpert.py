@@ -4,6 +4,7 @@ import search_canaries
 import base64
 import logging
 import logging.handlers
+#from logging.handlers.SysLogHandler import LOG_SYSLOG
 
 
 with open('config.json', encoding='utf8') as config_file:
@@ -12,10 +13,28 @@ with open('config.json', encoding='utf8') as config_file:
 # logger.basicConfig(filename='analyzed.log', level=logging.WARNING, 
 #                     format='%(message)s')
 
-logger = logging.getLogger('canary-expert')
-handler = logging.handlers.SysLogHandler(address=(Config['logger']['IP'], Config['logger']['port']), facility=logging.handlers.SysLogHandler.LOG_SYSLOG)
-handler.setFormatter(logging.Formatter('%(message)s'))
-logger.addHandler(handler)
+logger = logging.getLogger('canary-experts')
+logger.setLevel(logging.INFO)
+# handler = logging.handlers.SysLogHandler(address=(Config['logger']['IP'], Config['logger']['port']), facility=logging.handlers.SysLogHandler.LOG_SYSLOG)
+# handler.setFormatter(logging.Formatter('%(message)s'))
+# logger.addHandler(handler)
+syslog = logging.handlers.SysLogHandler(address='/dev/log')
+syslog.setFormatter(logging.Formatter(
+    '%(name)s: [%(levelname)s] %(message)s'
+))
+logger.addHandler(syslog)
+
+remote_syslog = logging.handlers.SysLogHandler(address=('localhost', 12345), facility=logging.handlers.SysLogHandler.LOG_SYSLOG)
+remote_syslog.setFormatter(logging.Formatter(
+    '%(name)s: [%(levelname)s] %(message)s'
+))
+logger.addHandler(remote_syslog)
+
+
+
+#logger.addHandler(syslog)
+
+
 
 file = open('analyzed_logs.txt', 'a')
 
