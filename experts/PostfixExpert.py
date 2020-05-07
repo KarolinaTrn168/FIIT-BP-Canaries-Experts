@@ -1,6 +1,7 @@
 import re
 import logging
 import logging.handlers
+import json
 
 
 with open('config.json', encoding='utf8') as config_file:
@@ -93,29 +94,29 @@ class PostfixExpert:
             return
 
 
-       elif self.noqueue and self.proto and self.from_mail and self.to_mail and self.relay_denied:       #SMTP-Honeypot is used -- Relay access denied
-          json.dump(log, file)
-          file.write('\n') 
-          r.rpush('mail_list', json.dumps({'time':log['time'], 'message':log['message'], 'program':log['program']}))
-          try:
-               try:
-                   logging.warning({'mail_from': self.from_mail.group(1),
-                               'mail_to': self.to_mail.group(1),
-                               'IP': self.IP.group(1) if self.IP else None,
-                               'status': 'FAIL', 
-                               'domain': search_canaries.search_canary(self.from_mail.group(1))[1][search_canaries.search_canary(self.from_mail.group(1))[2]['uuid']],
-                               'site': search_canaries.search_canary(self.from_mail.group(1))[0][search_canaries.search_canary(self.from_mail.group(1))[2]['uuid']],
-                               'testing': search_canaries.search_canary(self.from_mail.group(1))[2]['testing'],
-                               'message': 'Relay access denied' })
-               except:
-                   logging.warning({'mail_from': self.from_mail.group(1),
-                               'mail_to': self.to_mail.group(1),
-                               'IP': self.IP.group(1) if self.IP else None,
-                               'status': 'FAIL',
-                               'domain': search_canaries.search_canary(self.from_mail.group(1))[1]['details'],
-                               'site': search_canaries.search_canary(self.from_mail.group(1))[0]['details'],
-                               'testing': search_canaries.search_canary(self.from_mail.group(1))[2]['testing'],
-                               'message': 'Relay access denied' })
+        elif self.noqueue and self.proto and self.from_mail and self.to_mail and self.relay_denied:       #SMTP-Honeypot is used -- Relay access denied
+            json.dump(log, file)
+            file.write('\n') 
+            r.rpush('mail_list', json.dumps({'time':log['time'], 'message':log['message'], 'program':log['program']}))
+            try:
+                try:
+                    logging.warning({'mail_from': self.from_mail.group(1),
+                                     'mail_to': self.to_mail.group(1),
+                                     'IP': self.IP.group(1) if self.IP else None,
+                                     'status': 'FAIL', 
+                                     'domain': search_canaries.search_canary(self.from_mail.group(1))[1][search_canaries.search_canary(self.from_mail.group(1))[2]['uuid']],
+                                     'site': search_canaries.search_canary(self.from_mail.group(1))[0][search_canaries.search_canary(self.from_mail.group(1))[2]['uuid']],
+                                     'testing': search_canaries.search_canary(self.from_mail.group(1))[2]['testing'],
+                                     'message': 'Relay access denied' })
+                except:
+                    logging.warning({'mail_from': self.from_mail.group(1),
+                                     'mail_to': self.to_mail.group(1),
+                                     'IP': self.IP.group(1) if self.IP else None,
+                                     'status': 'FAIL',
+                                     'domain': search_canaries.search_canary(self.from_mail.group(1))[1]['details'],
+                                     'site': search_canaries.search_canary(self.from_mail.group(1))[0]['details'],
+                                     'testing': search_canaries.search_canary(self.from_mail.group(1))[2]['testing'],
+                                     'message': 'Relay access denied' })
 
                 try:
                    logging.warning({'mail_from': self.from_mail.group(1),
@@ -126,19 +127,18 @@ class PostfixExpert:
                                'site': search_canaries.search_canary(self.to_mail.group(1))[0][search_canaries.search_canary(self.to_mail.group(1))[2]['uuid']],
                                'testing': search_canaries.search_canary(self.to_mail.group(1))[2]['testing'],
                                'message': 'Relay access denied' })
-               except:
-                   logging.warning({'mail_from': self.from_mail.group(1),
-                               'mail_to': self.to_mail.group(1),
-                               'IP': self.IP.group(1) if self.IP else None,
-                               'status': 'FAIL',
-                               'domain': search_canaries.search_canary(self.to_mail.group(1))[1]['details'],
-                               'site': search_canaries.search_canary(self.to_mail.group(1))[0]['details'],
-                               'testing': search_canaries.search_canary(self.to_mail.group(1))[2]['testing'],
-                               'message': 'Relay access denied' })
-           except:
-               return
-               
-           return
+                except:
+                    logging.warning({'mail_from': self.from_mail.group(1),
+                                     'mail_to': self.to_mail.group(1),
+                                     'IP': self.IP.group(1) if self.IP else None,
+                                     'status': 'FAIL',
+                                     'domain': search_canaries.search_canary(self.to_mail.group(1))[1]['details'],
+                                     'site': search_canaries.search_canary(self.to_mail.group(1))[0]['details'],
+                                     'testing': search_canaries.search_canary(self.to_mail.group(1))[2]['testing'],
+                                     'message': 'Relay access denied' })
+            except:
+                return
+            return
 
 #        elif self.noqueue and self.proto and self.from_mail and self.to_mail and self.host_rejected:       #SMTP-Honeypot is used -- Host is rejected
 #           json.dump(log, file)
