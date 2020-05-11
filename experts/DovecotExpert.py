@@ -268,16 +268,14 @@ class DovecotExpert:
                                             'domain': search_canaries.search_canary(matchMail.group(1))[1]['details'],
                                             'site': search_canaries.search_canary(matchMail.group(1))[0]['details'],
                                             'testing': search_canaries.search_canary(matchMail.group(1))[2]['testing'] })
-                    except:
-                        logger.warning({'expert': 'SMTP Expert',
-                                    'mail': matchMail.group(1),
-                                    'password': self.Password.group(1) if self.Password else None,
-                                    'IP': self.IP.group(1) if self.IP else None,
-                                    'status': 'FAIL', 
-                                    'details': 'NOT a canary' })
                 except:
-                    return
-                    
+                    logger.warning({'expert': 'SMTP Expert',
+                                'mail': matchMail.group(1),
+                                'password': self.Password.group(1) if self.Password else None,
+                                'IP': self.IP.group(1) if self.IP else None,
+                                'status': 'FAIL', 
+                                'details': 'NOT a canary' })
+
                 return
 
 
