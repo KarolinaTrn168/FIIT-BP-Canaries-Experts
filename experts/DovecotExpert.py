@@ -203,21 +203,25 @@ class DovecotExpert:
                                             'site': search_canaries.search_canary(matchMail.group(1))[0]['details'],
                                             'testing': search_canaries.search_canary(matchMail.group(1))[2]['testing'] })
                             except:
-                                logger.warning({'expert': 'IMAP Expert',
-                                            'mail': matchMail.group(1),
-                                            'password': self.used_password.group(1) if self.used_password else None,
-                                            'IP': self.IP.group(1) if self.IP else None,
-                                            'status': 'FAIL',
-                                            'domain': search_canaries.search_canary(matchMail.group(1))[1]['details'],
-                                            'site': search_canaries.search_canary(matchMail.group(1))[0]['details'],
-                                            'testing': search_canaries.search_canary(matchMail.group(1))[2]['testing'] })
+                                try:
+                                    logger.warning({'expert': 'IMAP Expert',
+                                                'mail': matchMail.group(1),
+                                                'password': self.used_password.group(1) if self.used_password else None,
+                                                'IP': self.IP.group(1) if self.IP else None,
+                                                'status': 'FAIL',
+                                                'domain': search_canaries.search_canary(matchMail.group(1))[1]['details'],
+                                                'site': search_canaries.search_canary(matchMail.group(1))[0]['details'],
+                                                'testing': search_canaries.search_canary(matchMail.group(1))[2]['testing'] })
+                                except:
+                                    logger.warning({'expert': 'IMAP Expert',
+                                                'mail': matchMail.group(1),
+                                                'password': self.used_password.group(1) if self.used_password else None,
+                                                'IP': self.IP.group(1) if self.IP else None,
+                                                'status': 'FAIL', 
+                                                'details': 'NOT a canary' })
                 except:
-                    logger.warning({'expert': 'IMAP Expert',
-                                'mail': matchMail.group(1),
-                                'password': self.used_password.group(1) if self.used_password else None,
-                                'IP': self.IP.group(1) if self.IP else None,
-                                'status': 'FAIL', 
-                                'details': 'NOT a canary' })
+                    return
+                    
                 return
 
         elif self.plain and self.service_imap and self.secured and self.base64:     #IMAP, Successful connection
@@ -268,21 +272,25 @@ class DovecotExpert:
                                         'site': search_canaries.search_canary(matchMail2.group(1))[0]['details'],
                                         'testing': search_canaries.search_canary(matchMail2.group(1))[2]['testing'] })
                         except:
-                            logger.warning({'expert': 'IMAP Expert',
-                                        'mail': matchMail2.group(1),
-                                        'password': 'true',
-                                        'IP': matchlip.group(1) if self.lip else None,
-                                        'status': 'SUCCESS',
-                                        'domain': search_canaries.search_canary(matchMail2.group(1))[1]['details'],
-                                        'site': search_canaries.search_canary(matchMail2.group(1))[0]['details'],
-                                        'testing': search_canaries.search_canary(matchMail2.group(1))[2]['testing'] })
+                            try:
+                                logger.warning({'expert': 'IMAP Expert',
+                                            'mail': matchMail2.group(1),
+                                            'password': 'true',
+                                            'IP': matchlip.group(1) if self.lip else None,
+                                            'status': 'SUCCESS',
+                                            'domain': search_canaries.search_canary(matchMail2.group(1))[1]['details'],
+                                            'site': search_canaries.search_canary(matchMail2.group(1))[0]['details'],
+                                            'testing': search_canaries.search_canary(matchMail2.group(1))[2]['testing'] })
+                            except:
+                                logger.warning({'expert': 'IMAP Expert',
+                                            'mail': matchMail2.group(1),
+                                            'password': 'true',
+                                            'IP': matchlip.group(1) if self.lip else None,
+                                            'status': 'SUCCESS', 
+                                            'details': 'NOT a canary' })
             except:
-                logger.warning({'expert': 'IMAP Expert',
-                            'mail': matchMail2.group(1),
-                            'password': 'true',
-                            'IP': matchlip.group(1) if self.lip else None,
-                            'status': 'SUCCESS', 
-                            'details': 'NOT a canary' })
+                return
+                
             return
         
         elif self.inbox and self.msgid:
