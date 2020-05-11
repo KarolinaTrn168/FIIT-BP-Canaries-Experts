@@ -39,7 +39,7 @@ def getLog():
     logs = []
 
     #for x in range(r.llen('log_queue')):
-    for x in range(5):
+    for x in range(2000):
       try:
         logs.append(json.loads(r.lindex('log_queue', x).decode('utf-8'), strict=False))
       except:
@@ -63,7 +63,7 @@ while i == 0:
             if log['program'] in e['types']:        #ak expert akceptuje typ programu, dany expert recievne log a tam ho spracuje             
                 e['class'].receive(log, r)
         logy.remove(logy[0])        #vymazem poslany log z logov 
-        print('log')
+       #  print('log')
 
 
     print('idem spat')
