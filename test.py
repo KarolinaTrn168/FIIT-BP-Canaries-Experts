@@ -15,17 +15,21 @@ except Exception as ex:
     exit('Failed')
 
 print(r.keys())
-#r.set('mail_list', 0)
+#r.set('analyzed_logs', 0)
 #print(r.keys())
-#r.lpop('mail_list')
+#r.lpop('analyzed_logs')
 
 
-# r.delete('mail_list')
+# r.delete('analyzed_logs')
 # print(r.keys())
 
 
-for x in range(r.llen('mail_list')):
-    print(r.lindex('mail_list', x))
+for x in range(r.llen('analyzed_logs')):
+    print(r.lindex('analyzed_logs', x))
+
+
+for x in range (5):
+    print(r.lindex('log_queue', x))
 
 # base64_message = 'AGNvbWJpbmVkQGN1YmVtYWlsLmdhAHRlc3Q'
 # base64_message += "=" * ((4 - len(base64_message) % 4) % 4)

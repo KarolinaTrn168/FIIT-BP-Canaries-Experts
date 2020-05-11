@@ -67,7 +67,7 @@ class PostfixExpert:
         elif self.method and self.username and matchMail:       #SMTP, Successful connection
             json.dump(log, file)
             file.write('\n')
-            r.rpush('mail_list', json.dumps({'time':log['time'], 'message':log['message'], 'program':log['program']}))
+            r.rpush('analyzed_logs', json.dumps({'time':log['time'], 'message':log['message'], 'program':log['program']}))
             try:
                 try:
                     logger.warning({'expert': 'SMTP Expert',
@@ -117,13 +117,13 @@ class PostfixExpert:
             return
 
 
-        elif self.noqueue and self.proto and self.from_mail and self.to_mail and self.relay_denied:       #SMTP-Honeypot is used -- Relay access denied
+        elif self.noqueue and self.proto and self.from_mail and self.to_mail and self.relay_denied:       #SPAM-Honeypot is used -- Relay access denied
             json.dump(log, file)
             file.write('\n') 
-            r.rpush('mail_list', json.dumps({'time':log['time'], 'message':log['message'], 'program':log['program']}))
+            r.rpush('analyzed_logs', json.dumps({'time':log['time'], 'message':log['message'], 'program':log['program']}))
             try:
                 try:
-                    logging.warning({'expert': 'SMAP Expert',
+                    logging.warning({'expert': 'SPAM Expert',
                                     'mail_from': self.from_mail.group(1),
                                      'mail_to': self.to_mail.group(1),
                                      'IP': self.IP.group(1) if self.IP else None,
@@ -131,10 +131,10 @@ class PostfixExpert:
                                      'domain': search_canaries.search_canary(self.from_mail.group(1))[1][search_canaries.search_canary(self.from_mail.group(1))[2]['uuid']],
                                      'site': search_canaries.search_canary(self.from_mail.group(1))[0][search_canaries.search_canary(self.from_mail.group(1))[2]['uuid']],
                                      'testing': search_canaries.search_canary(self.from_mail.group(1))[2]['testing'],
-                                     'message': 'SPAM trough ' + self.from_mail.group(1) })
+                                     'message': 'SPAM through ' + self.from_mail.group(1) })
                 except:
                     try:
-                        logging.warning({'expert': 'SMAP Expert',
+                        logging.warning({'expert': 'SPAM Expert',
                                         'mail_from': self.from_mail.group(1),
                                         'mail_to': self.to_mail.group(1),
                                         'IP': self.IP.group(1) if self.IP else None,
@@ -142,9 +142,10 @@ class PostfixExpert:
                                         'domain': search_canaries.search_canary(self.from_mail.group(1))[1]['details'],
                                         'site': search_canaries.search_canary(self.from_mail.group(1))[0][search_canaries.search_canary(self.from_mail.group(1))[2]['uuid']],
                                         'testing': search_canaries.search_canary(self.from_mail.group(1))[2]['testing'],
-                                        'message': 'SPAM trough ' + self.from_mail.group(1) })
+                                        'message': 'SPAM through ' + self.from_mail.group(1) })
+                    except:
                         try:
-                            logging.warning({'expert': 'SMAP Expert',
+                            logging.warning({'expert': 'SPAM Expert',
                                             'mail_from': self.from_mail.group(1),
                                             'mail_to': self.to_mail.group(1),
                                             'IP': self.IP.group(1) if self.IP else None,
@@ -152,62 +153,64 @@ class PostfixExpert:
                                             'domain': search_canaries.search_canary(self.from_mail.group(1))[1][search_canaries.search_canary(self.from_mail.group(1))[2]['uuid']],
                                             'site': search_canaries.search_canary(self.from_mail.group(1))[0]['details'],
                                             'testing': search_canaries.search_canary(self.from_mail.group(1))[2]['testing'],
-                                            'message': 'SPAM trough ' + self.from_mail.group(1) })
+                                            'message': 'SPAM through ' + self.from_mail.group(1) })
                         except:
-                            logging.warning({'expert': 'SMAP Expert',
-                                            'mail_from': self.from_mail.group(1),
-                                            'mail_to': self.to_mail.group(1),
-                                            'IP': self.IP.group(1) if self.IP else None,
-                                            'status': 'FAIL',
-                                            'domain': search_canaries.search_canary(self.from_mail.group(1))[1]['details'],
-                                            'site': search_canaries.search_canary(self.from_mail.group(1))[0]['details'],
-                                            'testing': search_canaries.search_canary(self.from_mail.group(1))[2]['testing'],
-                                            'message': 'SPAM trough ' + self.from_mail.group(1) })
-
-                try:
-                   logging.warning({'expert': 'SMAP Expert',
-                               'mail_from': self.from_mail.group(1),
-                               'mail_to': self.to_mail.group(1),
-                               'IP': self.IP.group(1) if self.IP else None,
-                               'status': 'FAIL', 
-                               'domain': search_canaries.search_canary(self.to_mail.group(1))[1][search_canaries.search_canary(self.to_mail.group(1))[2]['uuid']],
-                               'site': search_canaries.search_canary(self.to_mail.group(1))[0][search_canaries.search_canary(self.to_mail.group(1))[2]['uuid']],
-                               'testing': search_canaries.search_canary(self.to_mail.group(1))[2]['testing'],
-                               'message': 'SPAM trough ' + self.to_mail.group(1) })
-                except:
-                    try:
-                        logging.warning({'expert': 'SMAP Expert',
-                                    'mail_from': self.from_mail.group(1),
-                                    'mail_to': self.to_mail.group(1),
-                                    'IP': self.IP.group(1) if self.IP else None,
-                                    'status': 'FAIL', 
-                                    'domain': search_canaries.search_canary(self.to_mail.group(1))[1]['details'],
-                                    'site': search_canaries.search_canary(self.to_mail.group(1))[0][search_canaries.search_canary(self.to_mail.group(1))[2]['uuid']],
-                                    'testing': search_canaries.search_canary(self.to_mail.group(1))[2]['testing'],
-                                    'message': 'SPAM trough ' + self.to_mail.group(1) })
-                    except:
-                        try:
-                            logging.warning({'expert': 'SMAP Expert',
-                                        'mail_from': self.from_mail.group(1),
-                                        'mail_to': self.to_mail.group(1),
-                                        'IP': self.IP.group(1) if self.IP else None,
-                                        'status': 'FAIL', 
-                                        'domain': search_canaries.search_canary(self.to_mail.group(1))[1][search_canaries.search_canary(self.to_mail.group(1))[2]['uuid']],
-                                        'site': search_canaries.search_canary(self.to_mail.group(1))[0]['details'],
-                                        'testing': search_canaries.search_canary(self.to_mail.group(1))[2]['testing'],
-                                        'message': 'SPAM trough ' + self.to_mail.group(1) })
-                        except:
-                            logging.warning({'expert': 'SMAP Expert',
-                                            'mail_from': self.from_mail.group(1),
-                                            'mail_to': self.to_mail.group(1),
-                                            'IP': self.IP.group(1) if self.IP else None,
-                                            'status': 'FAIL',
-                                            'domain': search_canaries.search_canary(self.to_mail.group(1))[1]['details'],
-                                            'site': search_canaries.search_canary(self.to_mail.group(1))[0]['details'],
-                                            'testing': search_canaries.search_canary(self.to_mail.group(1))[2]['testing'],
-                                            'message': 'SPAM trough ' + self.to_mail.group(1) })
+                            try:
+                                logging.warning({'expert': 'SPAM Expert',
+                                                'mail_from': self.from_mail.group(1),
+                                                'mail_to': self.to_mail.group(1),
+                                                'IP': self.IP.group(1) if self.IP else None,
+                                                'status': 'FAIL',
+                                                'domain': search_canaries.search_canary(self.from_mail.group(1))[1]['details'],
+                                                'site': search_canaries.search_canary(self.from_mail.group(1))[0]['details'],
+                                                'testing': search_canaries.search_canary(self.from_mail.group(1))[2]['testing'],
+                                                'message': 'SPAM through ' + self.from_mail.group(1) })
+                            except:
+                                try:
+                                    logging.warning({'expert': 'SPAM Expert',
+                                                'mail_from': self.from_mail.group(1),
+                                                'mail_to': self.to_mail.group(1),
+                                                'IP': self.IP.group(1) if self.IP else None,
+                                                'status': 'FAIL', 
+                                                'domain': search_canaries.search_canary(self.to_mail.group(1))[1][search_canaries.search_canary(self.to_mail.group(1))[2]['uuid']],
+                                                'site': search_canaries.search_canary(self.to_mail.group(1))[0][search_canaries.search_canary(self.to_mail.group(1))[2]['uuid']],
+                                                'testing': search_canaries.search_canary(self.to_mail.group(1))[2]['testing'],
+                                                'message': 'SPAM through ' + self.to_mail.group(1) })
+                                except:
+                                    try:
+                                        logging.warning({'expert': 'SPAM Expert',
+                                                    'mail_from': self.from_mail.group(1),
+                                                    'mail_to': self.to_mail.group(1),
+                                                    'IP': self.IP.group(1) if self.IP else None,
+                                                    'status': 'FAIL', 
+                                                    'domain': search_canaries.search_canary(self.to_mail.group(1))[1]['details'],
+                                                    'site': search_canaries.search_canary(self.to_mail.group(1))[0][search_canaries.search_canary(self.to_mail.group(1))[2]['uuid']],
+                                                    'testing': search_canaries.search_canary(self.to_mail.group(1))[2]['testing'],
+                                                    'message': 'SPAM through ' + self.to_mail.group(1) })
+                                    except:
+                                        try:
+                                            logging.warning({'expert': 'SPAM Expert',
+                                                        'mail_from': self.from_mail.group(1),
+                                                        'mail_to': self.to_mail.group(1),
+                                                        'IP': self.IP.group(1) if self.IP else None,
+                                                        'status': 'FAIL', 
+                                                        'domain': search_canaries.search_canary(self.to_mail.group(1))[1][search_canaries.search_canary(self.to_mail.group(1))[2]['uuid']],
+                                                        'site': search_canaries.search_canary(self.to_mail.group(1))[0]['details'],
+                                                        'testing': search_canaries.search_canary(self.to_mail.group(1))[2]['testing'],
+                                                        'message': 'SPAM through ' + self.to_mail.group(1) })
+                                        except:
+                                            logging.warning({'expert': 'SPAM Expert',
+                                                            'mail_from': self.from_mail.group(1),
+                                                            'mail_to': self.to_mail.group(1),
+                                                            'IP': self.IP.group(1) if self.IP else None,
+                                                            'status': 'FAIL',
+                                                            'domain': search_canaries.search_canary(self.to_mail.group(1))[1]['details'],
+                                                            'site': search_canaries.search_canary(self.to_mail.group(1))[0]['details'],
+                                                            'testing': search_canaries.search_canary(self.to_mail.group(1))[2]['testing'],
+                                                            'message': 'SPAM through ' + self.to_mail.group(1) })
             except:
                 return
+        
             return
 
         else: 

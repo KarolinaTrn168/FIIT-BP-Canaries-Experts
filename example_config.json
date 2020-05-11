@@ -1,7 +1,7 @@
 {
 	"redis": {
 		"host_redis": "Hostname",
-		"port_redis": "Portnumber",
+		"port_redis": 11111, 
 		"debug_redis": true
 	}, 
 
@@ -10,5 +10,5 @@
 		"password_api": "Password",
 		"url_api": "URL",
 		"version_api": "Version"
-	}	
+	}
 }

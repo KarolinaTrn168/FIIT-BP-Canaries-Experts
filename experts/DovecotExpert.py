@@ -76,7 +76,7 @@ class DovecotExpert:
         if matchMail:
             json.dump(log, file)
             file.write('\n')
-            r.rpush('mail_list', json.dumps({'time':log['time'], 'message':log['message'], 'program':log['program']}))
+            r.rpush('analyzed_logs', json.dumps({'time':log['time'], 'message':log['message'], 'program':log['program']}))
             if self.Mismatch_passwd:        #SMTP, attempt to connect failed with wrong password
                 try:
                     if(self.Password == search_canaries.search_canary(matchMail.group(1))[2]['password']): 
@@ -179,33 +179,33 @@ class DovecotExpert:
                                     'testing': search_canaries.search_canary(matchMail.group(1))[2]['testing'] })
                     except:
                         try:
-                        logger.warning({'expert': 'IMAP Expert',
-                                    'mail': matchMail.group(1),
-                                    'password': self.used_password.group(1) if self.used_password else None,
-                                    'IP': self.IP.group(1) if self.IP else None,
-                                    'status': 'FAIL', 
-                                    'domain': search_canaries.search_canary(matchMail.group(1))[1]['details'],
-                                    'site': search_canaries.search_canary(matchMail.group(1))[0][search_canaries.search_canary(matchMail.group(1))[2]['uuid']],
-                                    'testing': search_canaries.search_canary(matchMail.group(1))[2]['testing'] })
+                            logger.warning({'expert': 'IMAP Expert',
+                                        'mail': matchMail.group(1),
+                                        'password': self.used_password.group(1) if self.used_password else None,
+                                        'IP': self.IP.group(1) if self.IP else None,
+                                        'status': 'FAIL', 
+                                        'domain': search_canaries.search_canary(matchMail.group(1))[1]['details'],
+                                        'site': search_canaries.search_canary(matchMail.group(1))[0][search_canaries.search_canary(matchMail.group(1))[2]['uuid']],
+                                        'testing': search_canaries.search_canary(matchMail.group(1))[2]['testing'] })
                         except:
                             try:
-                        logger.warning({'expert': 'IMAP Expert',
-                                    'mail': matchMail.group(1),
-                                    'password': self.used_password.group(1) if self.used_password else None,
-                                    'IP': self.IP.group(1) if self.IP else None,
-                                    'status': 'FAIL', 
-                                    'domain': search_canaries.search_canary(matchMail.group(1))[1][search_canaries.search_canary(matchMail.group(1))[2]['uuid']],
-                                    'site': search_canaries.search_canary(matchMail.group(1))[0]['details'],
-                                    'testing': search_canaries.search_canary(matchMail.group(1))[2]['testing'] })
+                                logger.warning({'expert': 'IMAP Expert',
+                                            'mail': matchMail.group(1),
+                                            'password': self.used_password.group(1) if self.used_password else None,
+                                            'IP': self.IP.group(1) if self.IP else None,
+                                            'status': 'FAIL', 
+                                            'domain': search_canaries.search_canary(matchMail.group(1))[1][search_canaries.search_canary(matchMail.group(1))[2]['uuid']],
+                                            'site': search_canaries.search_canary(matchMail.group(1))[0]['details'],
+                                            'testing': search_canaries.search_canary(matchMail.group(1))[2]['testing'] })
                             except:
-                        logger.warning({'expert': 'IMAP Expert',
-                                    'mail': matchMail.group(1),
-                                    'password': self.used_password.group(1) if self.used_password else None,
-                                    'IP': self.IP.group(1) if self.IP else None,
-                                    'status': 'FAIL',
-                                    'domain': search_canaries.search_canary(matchMail.group(1))[1]['details'],
-                                    'site': search_canaries.search_canary(matchMail.group(1))[0]['details'],
-                                    'testing': search_canaries.search_canary(matchMail.group(1))[2]['testing'] })
+                                logger.warning({'expert': 'IMAP Expert',
+                                            'mail': matchMail.group(1),
+                                            'password': self.used_password.group(1) if self.used_password else None,
+                                            'IP': self.IP.group(1) if self.IP else None,
+                                            'status': 'FAIL',
+                                            'domain': search_canaries.search_canary(matchMail.group(1))[1]['details'],
+                                            'site': search_canaries.search_canary(matchMail.group(1))[0]['details'],
+                                            'testing': search_canaries.search_canary(matchMail.group(1))[2]['testing'] })
                 except:
                     logger.warning({'expert': 'IMAP Expert',
                                 'mail': matchMail.group(1),
@@ -218,7 +218,7 @@ class DovecotExpert:
         elif self.plain and self.service_imap and self.secured and self.base64:     #IMAP, Successful connection
             json.dump(log, file)
             file.write('\n')
-            r.rpush('mail_list', json.dumps({'time':log['time'], 'message':log['message'], 'program':log['program']}))
+            r.rpush('analyzed_logs', json.dumps({'time':log['time'], 'message':log['message'], 'program':log['program']}))
 
             base64_message = matchResponse.group(1)
             base64_message += "=" * ((4 - len(base64_message) % 4) % 4)
