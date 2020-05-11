@@ -23,13 +23,13 @@ print(r.keys())
 # r.delete('analyzed_logs')
 # print(r.keys())
 
+print(r.llen('log_queue'))
+# for x in range(r.llen('analyzed_logs')):
+#     print(r.lindex('analyzed_logs', x))
 
-for x in range(r.llen('analyzed_logs')):
-    print(r.lindex('analyzed_logs', x))
 
-
-for x in range (5):
-    print(r.lindex('log_queue', x))
+# for x in range (5):
+#     print(r.lindex('log_queue', x))
 
 # base64_message = 'AGNvbWJpbmVkQGN1YmVtYWlsLmdhAHRlc3Q'
 # base64_message += "=" * ((4 - len(base64_message) % 4) % 4)

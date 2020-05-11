@@ -58,9 +58,7 @@ class PostfixExpert:
 
         self.proto = re.search(r'proto=ESMTP', log['message'])
 
-        self.host_rejected = re.search(r'Client host rejected:', log['message'])
         self.relay_denied = re.search(r'Relay access denied', log['message'])
-
 
         if self.unknown_connection:
             return
@@ -212,6 +210,6 @@ class PostfixExpert:
                 return
         
             return
-
+            
         else: 
             return

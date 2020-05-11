@@ -73,6 +73,11 @@ class DovecotExpert:
         self.unequal = re.search(r'!=', log['message'])
         self.used_password = re.search(r'SHA512-CRYPT\((.*)\)', log['message'])
 
+        self.inbox = re.search(r'saved mail to INBOX', log['message'])
+        self.msgid = re.search(r'msgid', log['message'])
+        self.mail2 = re.search(r'(?:lmtp\()(.*)\):', log['message'])
+        self.sdomain = re.search(r'(?:msgid=<.*@)(.*)>:', log['message'])
+
         if matchMail:
             json.dump(log, file)
             file.write('\n')
@@ -279,6 +284,48 @@ class DovecotExpert:
                             'status': 'SUCCESS', 
                             'details': 'NOT a canary' })
             return
+        
+        elif self.inbox and self.msgid:
+            json.dump(log, file)
+            file.write('\n') 
+            r.rpush('analyzed_logs', json.dumps({'time':log['time'], 'message':log['message'], 'program':log['program']}))
+            try:
+                try:
+                    logging.warning({'expert': 'SPAM Expert',
+                                     'mail': self.mail2.group(1),
+                                     'status': 'SUCCESSFUL', 
+                                     'domain': search_canaries.search_canary(self.mail2.group(1))[1][search_canaries.search_canary(self.mail2.group(1))[2]['uuid']],
+                                     'site': search_canaries.search_canary(self.mail2.group(1))[0][search_canaries.search_canary(self.mail2.group(1))[2]['uuid']],
+                                     'testing': search_canaries.search_canary(self.mail2.group(1))[2]['testing'],
+                                     'message': 'Saved Mail, might be SPAM from ' + self.sdomain.group(1) })
+                except:
+                    try:
+                        logging.warning({'expert': 'SPAM Expert',
+                                        'mail': self.mail2.group(1),
+                                        'status': 'SUCCESSFUL', 
+                                        'domain': search_canaries.search_canary(self.mail2.group(1))[1]['details'],
+                                        'site': search_canaries.search_canary(self.mail2.group(1))[0][search_canaries.search_canary(self.mail2.group(1))[2]['uuid']],
+                                        'testing': search_canaries.search_canary(self.mail2.group(1))[2]['testing'],
+                                        'message': 'Saved Mail, might be SPAM from ' + self.sdomain.group(1) })
+                    except:
+                        try:
+                            logging.warning({'expert': 'SPAM Expert',
+                                            'mail': self.mail2.group(1),
+                                            'status': 'SUCCESSFUL', 
+                                            'domain': search_canaries.search_canary(self.mail2.group(1))[1][search_canaries.search_canary(self.mail2.group(1))[2]['uuid']],
+                                            'site': search_canaries.search_canary(self.mail2.group(1))[0]['details'],
+                                            'testing': search_canaries.search_canary(self.mail2.group(1))[2]['testing'],
+                                            'message': 'Saved Mail, might be SPAM from ' + self.sdomain.group(1) })
+                        except:
+                            logging.warning({'expert': 'SPAM Expert',
+                                            'mail': self.mail2.group(1),
+                                            'status': 'SUCCESSFUL',
+                                            'domain': search_canaries.search_canary(self.mail2.group(1))[1]['details'],
+                                            'site': search_canaries.search_canary(self.mail2.group(1))[0]['details'],
+                                            'testing': search_canaries.search_canary(self.mail2.group(1))[2]['testing'],
+                                            'message': 'Saved Mail, might be SPAM from ' + self.sdomain.group(1) })
+            except:
+                return
 
         else:
             return 
