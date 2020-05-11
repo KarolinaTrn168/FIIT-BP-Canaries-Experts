@@ -4,6 +4,7 @@ import redis
 import experts
 import connection_redis
 import search_canaries
+import time 
 
 
 #spojenie s redis
@@ -38,7 +39,7 @@ def getLog():
     logs = []
 
     #for x in range(r.llen('log_queue')):
-    for x in range(30):
+    for x in range(5):
       try:
         logs.append(json.loads(r.lindex('log_queue', x).decode('utf-8'), strict=False))
       except:
@@ -48,13 +49,22 @@ def getLog():
     return logs
    
 #zatial berie vsetky logy, ktore dam do logs... neskor by mal tahat logy, vzdy ked pridu nove 
-file = open('all_logs.txt', 'a')
-logy = getLog()
-while logy:
-    log = logy[0] 
-    json.dump(log, file)
-    file.write('\n')
-    for e in modules:       #posle log kazdemu expertovi
-        if log['program'] in e['types']:        #ak expert akceptuje typ programu, dany expert recievne log a tam ho spracuje             
-            e['class'].receive(log, r)
-    logy.remove(logy[0])        #vymazem poslany log z logov 
+i = 0
+while i == 0:
+    file = open('all_logs.txt', 'a')
+    logy = getLog()
+
+    while logy:
+        r.lpop('log_queue')
+        log = logy[0] 
+        json.dump(log, file)
+        file.write('\n')
+        for e in modules:       #posle log kazdemu expertovi
+            if log['program'] in e['types']:        #ak expert akceptuje typ programu, dany expert recievne log a tam ho spracuje             
+                e['class'].receive(log, r)
+        logy.remove(logy[0])        #vymazem poslany log z logov 
+        print('log')
+
+    print('idem spat')
+    time.sleep(5)
+    print('som hore')
