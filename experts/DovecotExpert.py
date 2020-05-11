@@ -78,6 +78,10 @@ class DovecotExpert:
         self.mail2 = re.search(r'(?:lmtp\()(.*)\):', log['message'])
         self.sdomain = re.search(r'(?:msgid=<.*@)(.*)>:', log['message'])
 
+        self.sql = re.search(r'sql', log['message'])
+        self.givenp = re.search(r'given password', log['message'])
+
+
         if matchMail:
             json.dump(log, file)
             file.write('\n')
@@ -221,8 +225,61 @@ class DovecotExpert:
                                                 'details': 'NOT a canary' })
                 except:
                     return
+
+                return
+            
+            elif self.sql and self.givenp:
+                try:
+                    try:
+                        logger.warning({'expert': 'SMTP Expert',
+                                    'mail': matchMail.group(1),
+                                    'password': self.Password.group(1) if self.Password else None,
+                                    'IP': self.IP.group(1) if self.IP else None,
+                                    'status': 'FAIL', 
+                                    'domain': search_canaries.search_canary(matchMail.group(1))[1][search_canaries.search_canary(matchMail.group(1))[2]['uuid']],
+                                    'site': search_canaries.search_canary(matchMail.group(1))[0][search_canaries.search_canary(matchMail.group(1))[2]['uuid']],
+                                    'testing': search_canaries.search_canary(matchMail.group(1))[2]['testing'] })
+                    except:
+                        try:
+                            logger.warning({'expert': 'SMTP Expert',
+                                        'mail': matchMail.group(1),
+                                        'password': self.Password.group(1) if self.Password else None,
+                                        'IP': self.IP.group(1) if self.IP else None,
+                                        'status': 'FAIL', 
+                                        'domain': search_canaries.search_canary(matchMail.group(1))[1]['details'],
+                                        'site': search_canaries.search_canary(matchMail.group(1))[0][search_canaries.search_canary(matchMail.group(1))[2]['uuid']],
+                                        'testing': search_canaries.search_canary(matchMail.group(1))[2]['testing'] })
+                        except:
+                            try:
+                                logger.warning({'expert': 'SMTP Expert',
+                                            'mail': matchMail.group(1),
+                                            'password': self.Password.group(1) if self.Password else None,
+                                            'IP': self.IP.group(1) if self.IP else None,
+                                            'status': 'FAIL', 
+                                            'domain': search_canaries.search_canary(matchMail.group(1))[1][search_canaries.search_canary(matchMail.group(1))[2]['uuid']],
+                                            'site': search_canaries.search_canary(matchMail.group(1))[0]['details'],
+                                            'testing': search_canaries.search_canary(matchMail.group(1))[2]['testing'] })
+                            except:
+                                logger.warning({'expert': 'SMTP Expert',
+                                            'mail': matchMail.group(1),
+                                            'password': self.Password.group(1) if self.Password else None,
+                                            'IP': self.IP.group(1) if self.IP else None,
+                                            'status': 'FAIL',
+                                            'domain': search_canaries.search_canary(matchMail.group(1))[1]['details'],
+                                            'site': search_canaries.search_canary(matchMail.group(1))[0]['details'],
+                                            'testing': search_canaries.search_canary(matchMail.group(1))[2]['testing'] })
+                    except:
+                        logger.warning({'expert': 'SMTP Expert',
+                                    'mail': matchMail.group(1),
+                                    'password': self.Password.group(1) if self.Password else None,
+                                    'IP': self.IP.group(1) if self.IP else None,
+                                    'status': 'FAIL', 
+                                    'details': 'NOT a canary' })
+                except:
+                    return
                     
                 return
+
 
         elif self.plain and self.service_imap and self.secured and self.base64:     #IMAP, Successful connection
             json.dump(log, file)
