@@ -48,3 +48,34 @@ Checking log message.
 {'mail': 'combined@cubemail.ga', 'password': 'test', 'IP': '89.173.33.57', 'status': 'FAIL', 'details': 'NOT a canary'}
 Checking log message.
 Checking log message.
+Checking log message.
+Checking log message.
+Checking log message.
+Checking log message.
+Checking log message.
+Checking log message.
+Checking log message.
+Checking log message.
+Checking log message.
+Checking log message.
+Checking log message.
+Checking log message.
+Checking log message.
+Checking log message.
+Checking log message.
+Checking log message.
+{'status': 'SUCCESS', 'mail': 'combined@cubemail.ga', 'IP': '185.8.164.42', 'password': 'true', 'details': 'NOT a canary'}
+Checking log message.
+Checking log message.
+Checking log message.
+Checking log message.
+Checking log message.
+Checking log message.
+Checking log message.
+Checking log message.
+Checking log message.
+{'status': 'FAIL', 'mail': 'combined@cubemail.ga', 'IP': '89.173.33.57', 'password': 'test', 'details': 'NOT a canary'}
+Checking log message.
+{'status': 'FAIL', 'mail': 'combined@cubemail.ga', 'IP': '89.173.33.57', 'password': 'test', 'details': 'NOT a canary'}
+Checking log message.
+Checking log message.
