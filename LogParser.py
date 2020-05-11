@@ -65,6 +65,7 @@ while i == 0:
         logy.remove(logy[0])        #vymazem poslany log z logov 
         print('log')
 
+
     print('idem spat')
     time.sleep(5)
     print('som hore')
