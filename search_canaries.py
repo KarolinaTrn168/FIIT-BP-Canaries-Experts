@@ -44,7 +44,7 @@ class authProvider:
                             data['expires'] - 5, self._refreshToken)
                         self.timer.start()
 
-                        print('Successfully logged in as "%s". Token expires on: %s' % (self.username, self.expires.strftime('%Y-%m-%d %H:%M:%S')))
+                        print('Successfully logged in. Token expires on: %s' % (self.expires.strftime('%Y-%m-%d %H:%M:%S')))
                     except:
                         raise
 

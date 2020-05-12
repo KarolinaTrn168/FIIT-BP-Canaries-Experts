@@ -38,8 +38,8 @@ registerExpert(experts.PostfixExpert)
 def getLog():    
     logs = []
 
-    #for x in range(r.llen('log_queue')):
-    for x in range(2000):
+    for x in range(r.llen('log_queue')):
+    #for x in range(2000):
       try:
         logs.append(json.loads(r.lindex('log_queue', x).decode('utf-8'), strict=False))
       except:
