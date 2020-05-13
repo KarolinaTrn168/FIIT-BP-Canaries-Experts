@@ -66,6 +66,6 @@ while i == 0:
        #  print('log')
 
 
-    print('idem spat')
-    time.sleep(5)
-    print('som hore')
+   # print('idem spat')
+    time.sleep(120)
+   # print('som hore')

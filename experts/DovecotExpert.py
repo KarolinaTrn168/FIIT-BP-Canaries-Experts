@@ -10,7 +10,7 @@ with open('config.json', encoding='utf8') as config_file:
 
 
 logger = logging.getLogger('canary-experts')
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.WARNING)
 
 syslog = logging.handlers.SysLogHandler(address='/dev/log')
 syslog.setFormatter(logging.Formatter(
